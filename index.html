@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>angular-hu-urlbuilder by angular-hu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">angular-hu-urlbuilder</h1>
+      <h2 class="project-tagline">Build totally custom URLs to access your backends with $http </h2>
+      <a href="https://github.com/angular-hu/bower-urlbuilder" class="btn">View on GitHub</a>
+      <a href="https://github.com/angular-hu/bower-urlbuilder/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/angular-hu/bower-urlbuilder/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="publish-repo-for-angular-hu-urlbuilder" class="anchor" href="#publish-repo-for-angular-hu-urlbuilder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publish repo for angular-hu-urlbuilder</h1>
+
+<p>This repo is for distribution on <code>bower</code>. The source for this module is in the
+<a href="https://github.com/angular-hu/angular-hu">main angular-hu-urlbuilder repo</a>.
+Please file issues and pull requests against that repo.</p>
+
+<h2>
+<a id="httpuurlbuilder" class="anchor" href="#httpuurlbuilder" aria-hidden="true"><span class="octicon octicon-link"></span></a>httpu.urlbuilder</h2>
+
+<p>Allows specifiying how an URL is built. In other words, allows you to customize how the <code>params</code> option in a <a href="https://docs.angularjs.org/api/ng/service/%24http">$http</a> request is converted to a queryString other than the default <a href="https://github.com/angular/angular.js/blob/v1.3.x/src/ng/http.js#L1136"><code>angular</code></a> way. Gives you the foundation to implement <a href="http://api.jquery.com/jquery.param/"><code>jquery</code></a> url builder and other backend specific serializations</p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>Get it from <a href="http://bower.io/">bower</a> or directly download it.</p>
+
+<div class="highlight highlight-sh"><pre>bower install --save angular-hu-urlbuilder</pre></div>
+
+<p>Add the dependency in the HTML</p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/angular-hu-urlbuilder/urlbuilder.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>Add the <code>httpu.urlbuilder</code> dependency to your App Module</p>
+
+<div class="highlight highlight-js"><pre>angular.module(<span class="pl-s"><span class="pl-pds">'</span>MyApp<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">'</span>httpu.urlbuilder<span class="pl-pds">'</span></span>]);</pre></div>
+
+<p>The <code>huURLBuilderInterceptor</code> and <code>huURLBuilderFactory</code> dependencies are now available</p>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<div class="highlight highlight-js"><pre>angular.module(<span class="pl-s"><span class="pl-pds">'</span>MyApp<span class="pl-pds">'</span></span>)
+<span class="pl-c">//Add the interceptor that will make the serialization.</span>
+.config(<span class="pl-k">function</span>(<span class="pl-smi">$httpProvider</span>) {
+  $httpProvider.interceptors.<span class="pl-c1">push</span>(<span class="pl-s"><span class="pl-pds">'</span>huURLBuilderInterceptor<span class="pl-pds">'</span></span>);
+})
+.factory(<span class="pl-s"><span class="pl-pds">'</span>pirateBuildUrl<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">huURLBuilderFactory</span>) {
+  <span class="pl-c">//this is how a `params` object is serialized</span>
+ <span class="pl-c">//you must call the `addKeyValue` with *all* your final key, value pairs.</span>
+ <span class="pl-c">//this serializer converts params to Pirate Language</span>
+ <span class="pl-k">function</span> <span class="pl-en">pirateSerializer</span>(<span class="pl-smi">params</span>, <span class="pl-smi">addKeyValue</span>) {
+    <span class="pl-c">//params is the $http request `params` option property</span>
+    angular.forEach(params, <span class="pl-k">function</span>(<span class="pl-smi">value</span>, <span class="pl-smi">key</span>) {
+      addKeyValue(<span class="pl-s"><span class="pl-pds">'</span>ARR<span class="pl-pds">'</span></span> <span class="pl-k">+</span> key, <span class="pl-s"><span class="pl-pds">'</span>RUM<span class="pl-pds">'</span></span> <span class="pl-k">+</span> value);
+    });
+  }
+
+  <span class="pl-k">return</span> huURLBuilderFactory(pirateSerializer);
+})
+.run(<span class="pl-k">function</span>(<span class="pl-smi">$http</span>, <span class="pl-smi">huURLBuilderFactory</span>) {
+
+  <span class="pl-c">//Make a request</span>
+  $http.get(<span class="pl-s"><span class="pl-pds">'</span>http://myapi.com/things<span class="pl-pds">'</span></span>, {
+    params<span class="pl-k">:</span> {
+      id<span class="pl-k">:</span> <span class="pl-c1">5</span>
+    },
+    <span class="pl-c">//specify the url builder</span>
+    buildUrl<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>pirateBuildUrl<span class="pl-pds">'</span></span>
+  });
+  <span class="pl-c">// GET http://myapi.com/things?ARRid=RUM5</span>
+});</pre></div>
+
+<h3>
+<a id="use-cases" class="anchor" href="#use-cases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use cases</h3>
+
+<ul>
+<li>You have a backend that doesn't understand the current param serialization from
+angular, and you have to code the serialized url directly in the url used for the
+request, losing the power of having it as a plain object.</li>
+</ul>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+
+<p>The MIT License (<a href="LICENSE">MIT</a>)</p>
+
+<p>Copyright (c) 2015 Telefónica I+D - <a href="http://www.tid.es">http://www.tid.es</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/angular-hu/bower-urlbuilder">angular-hu-urlbuilder</a> is maintained by <a href="https://github.com/angular-hu">angular-hu</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
